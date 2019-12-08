@@ -1,0 +1,3 @@
+[submodule "asyncHTTPrequest"]
+	path = asyncHTTPrequest
+	url = https://github.com/boblemaire/asyncHTTPrequest.git
