@@ -1,28 +1,19 @@
+#pragma once
 #include "sizer.hpp"
-#include "utility_cpp.hpp"
 template <typename Word>
-class Monospace_Sizer : Sizer<Word>
+class Monospace_Sizer : public Sizer<Word>
 {
     public:
 
-    Monospace_Sizer(unsigned int width, Word elipsis)
-    : Sizer<Word>()
-    , width(width)
-    , elipsis(elipsis)
-    {};
+    Monospace_Sizer() : Sizer<Word>() {};
 
-    bool overflow_with_elipsis(const Word word) const
+    bool overflow(const Word word, unsigned int size) const override
     {
-        return length(word + elipsis) > width;
+        return false == word_fits(word, size);
     };
 
-    bool overflow(const Word word) const
+    bool word_fits(const Word word, unsigned int max_size) const override
     {
-        return length(word) > width;
-    };
-
-    private:
-    unsigned int width;
-    Word elipsis;
-
+        return length(word) <= max_size;
+    }
 };

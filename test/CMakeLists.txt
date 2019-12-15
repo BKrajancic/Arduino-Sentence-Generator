@@ -8,4 +8,4 @@ main_test.cpp)
 target_link_libraries(${PROJECT_NAME}
 ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

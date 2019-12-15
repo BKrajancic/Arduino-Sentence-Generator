@@ -8,9 +8,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string>
+#include <memory>
 #include "grammar.hpp"
 #include <vector>
 #include "monospace_sizer.hpp"
+
 typedef Grammar<std::string,
                 std::vector<std::string>,
                 std::vector<std::string>::iterator>
@@ -34,7 +36,7 @@ BOOST_AUTO_TEST_CASE(ToVec)
     g[Word("_1")] = {{Word("T1"), Word("_2")}};
     g[Word("_2")] = {{Word("T2"), Word("_3")}};
     g[Word("_3")] = {{Word("T3")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
 
     const auto str = generator.generate_sentence(Word("_1"));
@@ -48,7 +50,7 @@ BOOST_AUTO_TEST_CASE(ToString)
     auto g = Grammar_Test();
     g[Word("_1")] = {{Word("T1"), Word("_2")}};
     g[Word("_2")] = {{Word("T2")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
     const auto expected = {Word("T1"), Word("T2")};
@@ -62,7 +64,7 @@ BOOST_AUTO_TEST_CASE(First_Is_Transition)
     auto g = Grammar_Test();
     g[Word("_1")] = {{Word("_2")}};
     g[Word("_2")] = {{Word("T2")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
 
@@ -77,7 +79,7 @@ BOOST_AUTO_TEST_CASE(LeftGrammar)
     g[Word("_1")] = {{Word("T1"), Word("_2")}};
     g[Word("_2")] = {{Word("T2"), Word("_3")}};
     g[Word("_3")] = {{Word("T3")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
 
@@ -92,7 +94,7 @@ BOOST_AUTO_TEST_CASE(RightGrammar)
     g[Word("_1")] = {{Word("_2"), Word("T1")}};
     g[Word("_2")] = {{Word("_3"), Word("T2")}};
     g[Word("_3")] = {{Word("T3")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
 
@@ -107,7 +109,7 @@ BOOST_AUTO_TEST_CASE(LeftAndRightGrammar)
     g[Word("_1")] = {{Word("_2"), Word("T1")}};
     g[Word("_2")] = {{Word("T2"), Word("_3")}};
     g[Word("_3")] = {{Word("T3")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
 
@@ -122,7 +124,7 @@ BOOST_AUTO_TEST_CASE(NoWhitespace)
     g[Word("_1")] = {{Word("_2"), Word("T1")}};
     g[Word("_2")] = {{Word("T2"), Word("_3")}};
     g[Word("_3")] = {{Word("")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
 
@@ -135,7 +137,7 @@ BOOST_AUTO_TEST_CASE(Simple)
 {
     auto g = Grammar_Test();
     g[Word("_1")] = {{Word("T1"), Word("_2")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
 
@@ -149,7 +151,7 @@ BOOST_AUTO_TEST_CASE(Randomisation_1)
     srand(1);
     auto g = Grammar_Test();
     g[Word("_1")] = {{Word("T1"), Word("_2")}, {Word("T2"), Word("_2")}};
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
 
@@ -166,7 +168,7 @@ BOOST_AUTO_TEST_CASE(Randomisation_2)
         {Word("T2"), Word("_2")}
     };
 
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
 
     const auto str = generator.generate_sentence(Word("_1"));
@@ -196,7 +198,7 @@ BOOST_AUTO_TEST_CASE(EscapeLoops)
         {Word("Loop"), Word("_1")},
     };
 
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
     const auto expected = {Word("Loop"), Word("Loop")};
@@ -215,7 +217,7 @@ BOOST_AUTO_TEST_CASE(EscapeLoopsNoWhitespace)
         {Word("Loop"), Word("_1")},
         {Word("Loop"), Word("_1")}
     };
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     generator.set_grammar(g);
     const auto str = generator.generate_sentence(Word("_1"));
 
@@ -226,21 +228,21 @@ BOOST_AUTO_TEST_CASE(EscapeLoopsNoWhitespace)
 
 BOOST_AUTO_TEST_CASE(Repeating_Characters)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     const auto out = generator.repeating_characters(2,"X");
     BOOST_CHECK_EQUAL(out, Word("XX"));
 }
 
 BOOST_AUTO_TEST_CASE(Repeating_Characters_empty)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     const auto out = generator.repeating_characters(0,"X");
     BOOST_CHECK_EQUAL(out, Word(""));
 }
 
 BOOST_AUTO_TEST_CASE(trim_end_basic)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
 
     const auto text = Word("Sample_text ");
     const auto out = generator.trim_end(text);
@@ -249,7 +251,7 @@ BOOST_AUTO_TEST_CASE(trim_end_basic)
 
 BOOST_AUTO_TEST_CASE(trim_end_do_all)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
 
     const auto text = Word("Sample_text    ");
     const auto out = generator.trim_end(text);
@@ -258,7 +260,7 @@ BOOST_AUTO_TEST_CASE(trim_end_do_all)
 
 BOOST_AUTO_TEST_CASE(trim_end_Ignore_Start)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
 
     const auto text = Word(" Sample_text");
     const auto out = generator.trim_end(text);
@@ -267,7 +269,7 @@ BOOST_AUTO_TEST_CASE(trim_end_Ignore_Start)
 
 BOOST_AUTO_TEST_CASE(trim_end_Ignore_Middle)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
 
     const auto text = Word("Sample text");
     const auto out = generator.trim_end(text);
@@ -276,7 +278,7 @@ BOOST_AUTO_TEST_CASE(trim_end_Ignore_Middle)
 
 BOOST_AUTO_TEST_CASE(trim_end_only_end)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     const auto text = Word(" Sample text ");
     const auto out = generator.trim_end(text);
     BOOST_CHECK_EQUAL(out, Word(" Sample text"));
@@ -284,12 +286,12 @@ BOOST_AUTO_TEST_CASE(trim_end_only_end)
 
 BOOST_AUTO_TEST_CASE(expect_first_empty)
 {
-    auto generator = Sentence_Generator_Test(5, 2);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     auto g = Grammar_Test();
     g[Word("<START>")] = {{"0","2","4","6","8"}};
     generator.set_grammar(g);
 
-    const auto empty = generator.get_screen();
+    const auto empty = generator.get_screen(5, 2);
     const Sentence expected_empty = {Word(), Word()};
 
     BOOST_CHECK_EQUAL_COLLECTIONS(  empty.begin(), empty.end(),
@@ -298,13 +300,13 @@ BOOST_AUTO_TEST_CASE(expect_first_empty)
 
 BOOST_AUTO_TEST_CASE(add_linebreaks_basic)
 {
-    auto generator = Sentence_Generator_Test(5, 2);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     auto g = Grammar_Test();
     g[Word("<START>")] = {{"0","2","4","6","8"}};
     generator.set_grammar(g);
 
-    generator.get_screen(); // Empty
-    const auto out = generator.get_screen();
+    generator.get_screen(5, 2); // Empty
+    const auto out = generator.get_screen(5, 2);
     const auto expected = {Word("0 2 4"), Word("6 8")};
 
     BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(),out.end(),
@@ -313,13 +315,13 @@ BOOST_AUTO_TEST_CASE(add_linebreaks_basic)
 
 BOOST_AUTO_TEST_CASE(not_empty_after)
 {
-    auto generator = Sentence_Generator_Test(5, 2);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     auto g = Grammar_Test();
     g[Word("<START>")] = {{"0","2","4","6","8"}};
     generator.set_grammar(g);
-    generator.get_screen(); // empty
-    generator.get_screen(); // content
-    const auto out = generator.get_screen();
+    generator.get_screen(5, 2); // empty
+    generator.get_screen(5, 2); // content
+    const auto out = generator.get_screen(5, 2);
     const auto expected = {Word("0 2 4"), Word("6 8")};
 
     BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(),out.end(),
@@ -328,13 +330,13 @@ BOOST_AUTO_TEST_CASE(not_empty_after)
 
 BOOST_AUTO_TEST_CASE(overflow)
 {
-    auto generator = Sentence_Generator_Test(5, 1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     auto g = Grammar_Test();
     g[Word("<START>")] = {{"0123456"}};
     generator.set_grammar(g);
-    generator.get_screen(); // empty
-    const auto out1 = generator.get_screen();
-    const auto out2 = generator.get_screen();
+    generator.get_screen(5, 1); // empty
+    const auto out1 = generator.get_screen(5, 1);
+    const auto out2 = generator.get_screen(5, 1);
 
     const auto expected1 = {Word("0123-")};
     const auto expected2 = {Word("456")};
@@ -347,13 +349,13 @@ BOOST_AUTO_TEST_CASE(overflow)
 
 BOOST_AUTO_TEST_CASE(overflow_elipsis)
 {
-    auto generator = Sentence_Generator_Test(6, 1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     auto g = Grammar_Test();
     g[Word("<START>")] = {{"123", "456"}};
     generator.set_grammar(g);
-    generator.get_screen(); // empty
-    const auto out1 = generator.get_screen();
-    const auto out2 = generator.get_screen();
+    generator.get_screen(6, 1); // empty
+    const auto out1 = generator.get_screen(6, 1);
+    const auto out2 = generator.get_screen(6, 1);
 
     const auto expected1 = {Word("123...")};
     const auto expected2 = {Word("456")};
@@ -366,12 +368,12 @@ BOOST_AUTO_TEST_CASE(overflow_elipsis)
 
 BOOST_AUTO_TEST_CASE(overflow_but_fits)
 {
-    auto generator = Sentence_Generator_Test(6, 1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     auto g = Grammar_Test();
     g[Word("<START>")] = {{"123", "45"}};
     generator.set_grammar(g);
-    generator.get_screen(); // empty
-    const auto out1 = generator.get_screen();
+    generator.get_screen(6, 1); // empty
+    const auto out1 = generator.get_screen(6, 1);
 
     const auto expected1 = {Word("123 45")};
 
@@ -382,13 +384,13 @@ BOOST_AUTO_TEST_CASE(overflow_but_fits)
 
 BOOST_AUTO_TEST_CASE(overflow_whith_ws)
 {
-    auto generator = Sentence_Generator_Test(7, 1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     auto g = Grammar_Test();
     g[Word("<START>")] = {{"123", "456789"}};
     generator.set_grammar(g);
-    generator.get_screen(); // empty
-    const auto out1 = generator.get_screen();
-    const auto out2 = generator.get_screen();
+    generator.get_screen(7, 1); // empty
+    const auto out1 = generator.get_screen(7, 1);
+    const auto out2 = generator.get_screen(7, 1);
 
     const auto expected1 = {Word("123...")};
     const auto expected2 = {Word("456789")};
@@ -400,7 +402,7 @@ BOOST_AUTO_TEST_CASE(overflow_whith_ws)
 
 BOOST_AUTO_TEST_CASE(test_no_space)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
 
     const Sentence text = {{"I[NO_SPACE]"},{"love"}};
     const auto out = generator.run_macros(text);
@@ -413,7 +415,7 @@ BOOST_AUTO_TEST_CASE(test_no_space)
 
 BOOST_AUTO_TEST_CASE(test_no_space_lhs_rhs_2)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
 
     const Sentence text = {{"I"},{"[NO_SPACE]love"}};
     const auto out = generator.run_macros(text);
@@ -427,7 +429,7 @@ BOOST_AUTO_TEST_CASE(test_no_space_lhs_rhs_2)
 
 BOOST_AUTO_TEST_CASE(test_no_space_lhs_rhs)
 {
-    auto generator = Sentence_Generator_Test(16,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     const Sentence text = {{"I[NO_SPACE]"}, {""}};
 
     const auto out = generator.run_macros(text);
@@ -445,7 +447,7 @@ BOOST_AUTO_TEST_CASE(test_no_space_lhs_rhs)
 
 BOOST_AUTO_TEST_CASE(demo_pop_size)
 {
-    auto generator = Sentence_Generator_Test(4,1);
+    auto generator = Sentence_Generator_Test(std::make_unique<Monospace_Sizer<Word>>());
     auto g = Grammar_Test();
     g[Word("<START>")] = {{Word("T1"), Word("_2")}};
     g[Word("_2")] = {{Word("T2"), Word("_3")}};
@@ -463,15 +465,11 @@ BOOST_AUTO_TEST_CASE(demo_pop_size)
 
 BOOST_AUTO_TEST_CASE(test_sizer)
 {
-    auto sizer = Monospace_Sizer_Test(5, "...");
-    BOOST_CHECK_EQUAL(false,  sizer.overflow_with_elipsis("12"));
-    BOOST_CHECK_EQUAL(true, sizer.overflow_with_elipsis("1234"));
-    BOOST_CHECK_EQUAL(true, sizer.overflow_with_elipsis("12345"));
-
-    BOOST_CHECK_EQUAL(false, sizer.overflow("12"));
-    BOOST_CHECK_EQUAL(false, sizer.overflow("1234"));
-    BOOST_CHECK_EQUAL(false, sizer.overflow("12345"));
-    BOOST_CHECK_EQUAL(true, sizer.overflow("123456"));
+    const auto sizer = Monospace_Sizer_Test();
+    BOOST_CHECK_EQUAL(false, sizer.overflow("12", 5));
+    BOOST_CHECK_EQUAL(false, sizer.overflow("1234", 5));
+    BOOST_CHECK_EQUAL(false, sizer.overflow("12345", 5));
+    BOOST_CHECK_EQUAL(true, sizer.overflow("123456", 5));
 }
 
 #endif

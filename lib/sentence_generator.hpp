@@ -4,36 +4,28 @@
 #include "macros/no_space_end.hpp"
 #include "macros/remove_empty.hpp"
 
+#include "monospace_sizer.hpp"
+
 #include <vector>
 #include <algorithm>
 #include <random>
 #include <iostream>
+#include <memory>
+
 template <typename Grammar, typename Word, typename Sentence, typename Sentence_Iterator>
 class Sentence_Generator
 {
   public:
-    Sentence_Generator(const unsigned int chars_per_row_init, const unsigned int rows_per_screen_init)
-      : elipsis(Word("..."))
+    Sentence_Generator(std::unique_ptr<Sizer<Word>> sizer)
+      : sizer(std::move(sizer))
+      , elipsis(Word("..."))
       , overflow(Word("-"))
-      , penultimate_row(0)
-      , short_size(0)
-      , chars_per_row(0)
-      , rows_per_screen(0)
     {
-        resize(chars_per_row_init, rows_per_screen_init);
         macros.push_back(new Remove_Empty<Word, Sentence, Sentence_Iterator>());
         macros.push_back(new No_Space_Begin<Word, Sentence, Sentence_Iterator>());
         macros.push_back(new No_Space_End<Word, Sentence, Sentence_Iterator>());
         g = Grammar();
         shuffle();
-    }
-
-    void resize(const unsigned int chars_per_row_init, const unsigned int rows_per_screen_init)
-    {
-        chars_per_row = chars_per_row_init;
-        rows_per_screen = rows_per_screen_init;
-        penultimate_row = rows_per_screen - 1u;
-        short_size = chars_per_row - length(elipsis);
     }
 
     void set_grammar(const Grammar new_grammar)
@@ -177,10 +169,10 @@ class Sentence_Generator
     {
       const auto sum_of_elems = std::accumulate(
         stack.begin(), stack.end(), Word(""),
-        [] (const Word lhs, const Word rhs){return lhs + rhs;});
-      const auto whitespaces = stack.empty() ? 0 : (stack.size() - 1);
+        [&] (const Word lhs, const Word rhs){return join_strings(lhs, rhs);}
+      );
 
-      return length(sum_of_elems) + whitespaces;
+      return length(sum_of_elems);
     }
 
     /*
@@ -201,17 +193,20 @@ class Sentence_Generator
       {
         Word out = stack.back();
         stack.pop_back();
-        if (length(out) > signed(size))
+        if (sizer->overflow(out, size))
         {
           stack.push_back(substring(out, size, out.length()));
           out = substring(out, 0, size);
         }
 
-        while (peek_row_size() != 0 && length(out) + peek_row_size() < size)
+        while (
+          peek_next_size() != 0 &&
+          sizer->word_fits(
+            join_strings(out, stack.back()),
+            size))
         {
-          const auto back = stack.back();
+          out = join_strings(out, stack.back());
           stack.pop_back();
-          out += Word(" ") + back;
         }
         return out;
       }
@@ -234,27 +229,28 @@ class Sentence_Generator
         return input;
     }
 
-    Sentence get_screen()
+    Sentence get_screen(const unsigned int width_per_row, const unsigned int rows_per_screen)
     {
         Sentence out;
-        for (auto j = 0u; j < penultimate_row && size_remaining(); ++j)
+        for (auto j = 0u; j < rows_per_screen - 1u && size_remaining(); ++j)
         {
-            out.push_back(pop_size(chars_per_row));
+            out.push_back(pop_size(width_per_row));
         }
 
         if (size_remaining() != 0u)
         {
-          if (size_remaining() <= chars_per_row)
+          if (sizer->word_fits(remaining(), width_per_row))
           {
-              out.push_back(pop_size(chars_per_row));
+              out.push_back(pop_size(width_per_row));
           }
-          else if (peek_row_size() > short_size)
+          else if (sizer->overflow(stack.back(), width_per_row))
           {
-              const auto pop = pop_size(chars_per_row - length(overflow));
+              const auto pop = pop_size(width_per_row - length(overflow));
               out.push_back(pop + overflow);
           }
           else
           {
+              const auto short_size = width_per_row - length(elipsis);
               const auto pop = pop_size(short_size);
               out.push_back(pop + elipsis);
           }
@@ -278,23 +274,29 @@ class Sentence_Generator
     Returns the size of the next word.
     '0' means that there is no word next.
     */
-    size_t peek_row_size() const
+    size_t peek_next_size() const
     {
       if (stack.empty())
       {
         return 0;
       }
-
       return length(stack.back());
-
     }
+
+    Word remaining() const
+    {
+      const auto sum_of_elems = std::accumulate(
+        stack.begin(),
+        stack.end(),
+        Word(""),
+        [&] (const Word lhs, const Word rhs){return join_strings(lhs, rhs);}
+      );
+      return sum_of_elems;
+    }
+
+    std::unique_ptr<Sizer<Word>> sizer;
     const Word elipsis;
     const Word overflow;
-
-    unsigned int penultimate_row;
-    unsigned int short_size;
-    unsigned int chars_per_row;
-    unsigned int rows_per_screen;
 
     Grammar g;
     Sentence stack;

@@ -21,10 +21,15 @@ public slots:
     void pressed(const QString text);
 
 private:
-    Sentence_Generator_Widget* text;
+    unsigned int get_width() const;
     Ui::MainWindow *ui;
+    Sentence_Generator_Widget* text;
+
     QNetworkAccessManager* manager;
-    const QString source;
     QGridLayout* btnLayout;
+
+    const QString source;
+    int rows;
+    int cols;
 };
 #endif // MAINWINDOW_H

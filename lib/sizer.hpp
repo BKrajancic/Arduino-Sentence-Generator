@@ -1,6 +1,7 @@
 /*
 A sizer will check if characters will fit on a line.
 */
+#pragma once
 
 template <typename Word>
 class Sizer
@@ -8,8 +9,11 @@ class Sizer
     public:
 
     Sizer() {};
-    virtual bool overflow_with_elipsis(const Word word) const = 0;
-    virtual bool overflow(const Word word) const = 0;
+    virtual ~Sizer() {};
+
+    virtual bool overflow(const Word word,  unsigned int size) const = 0;
+    virtual bool word_fits(const Word word, unsigned int size) const = 0;
+
     void set_elipsis(const Word elipsis)
     {
         this->elipsis = elipsis;

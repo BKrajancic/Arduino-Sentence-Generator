@@ -1,4 +1,6 @@
 #include <QString>
+#include "sentence_generator_widget.hpp"
+
 int length(QString str)
 {
     return str.length();
@@ -14,29 +16,19 @@ QString substring(QString str, int start,int end)
     return out;
 }
 
-#include "sentence_generator_widget.hpp"
-
-Sentence_Generator_Widget::Sentence_Generator_Widget(unsigned int cols, unsigned int rows, QWidget *parent)
+Sentence_Generator_Widget::Sentence_Generator_Widget(const QFont text_font, QWidget *parent)
     : QLabel(parent)
-    , sentence_generator(cols, rows)
+    , sentence_generator(std::make_unique<QT_GRAMMAR::Qt_Sizer>(text_font))
     , grammar()
     , mutex()
-{}
-
-Sentence_Generator_Widget::~Sentence_Generator_Widget()
 {
-
+    this->setFont(text_font);
 }
 
-void Sentence_Generator_Widget::set_screen_size(const unsigned int chars_per_row, const unsigned int rows_per_screen)
-{
-    sentence_generator.resize(chars_per_row, rows_per_screen);
-}
-
-void Sentence_Generator_Widget::next_screen()
+void Sentence_Generator_Widget::next_screen(const unsigned int max_width)
 {
     mutex.lock();
-    const auto screen_sentences = sentence_generator.get_screen();
+    const auto screen_sentences = sentence_generator.get_screen(max_width, 2);
     const auto screen_text = screen_sentences.join("\n");
     setText(screen_text);
     mutex.unlock();
