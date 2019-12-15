@@ -18,7 +18,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += ../lib
 
 SOURCES += \
-    personal_info_config.cpp \
     sentence_generator_widget.cpp \
     main.cpp \
     mainwindow.cpp

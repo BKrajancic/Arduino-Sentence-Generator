@@ -1,4 +1,5 @@
 //Utility functions for the C++ standard
+#pragma once
 #include <cstddef>
 #include <string>
 

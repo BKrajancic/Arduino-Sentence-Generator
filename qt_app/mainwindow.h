@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include "sentence_generator_widget.hpp"
+#include <QGridLayout>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -24,5 +25,6 @@ private:
     Ui::MainWindow *ui;
     QNetworkAccessManager* manager;
     const QString source;
+    QGridLayout* btnLayout;
 };
 #endif // MAINWINDOW_H

@@ -10,7 +10,7 @@
 #include <string>
 #include "grammar.hpp"
 #include <vector>
-
+#include "monospace_sizer.hpp"
 typedef Grammar<std::string,
                 std::vector<std::string>,
                 std::vector<std::string>::iterator>
@@ -25,6 +25,8 @@ typedef Sentence_Generator< Grammar_Test,
                             std::vector<std::string>,
                             std::vector<std::string>::iterator>
         Sentence_Generator_Test;
+
+typedef Monospace_Sizer<std::string> Monospace_Sizer_Test;
 
 BOOST_AUTO_TEST_CASE(ToVec)
 {
@@ -457,6 +459,19 @@ BOOST_AUTO_TEST_CASE(demo_pop_size)
     BOOST_CHECK_EQUAL(out1, Word("T1"));
     const auto out2 = generator.pop_size(7);
     BOOST_CHECK_EQUAL(out2, Word("T2 T3"));
+}
+
+BOOST_AUTO_TEST_CASE(test_sizer)
+{
+    auto sizer = Monospace_Sizer_Test(5, "...");
+    BOOST_CHECK_EQUAL(false,  sizer.overflow_with_elipsis("12"));
+    BOOST_CHECK_EQUAL(true, sizer.overflow_with_elipsis("1234"));
+    BOOST_CHECK_EQUAL(true, sizer.overflow_with_elipsis("12345"));
+
+    BOOST_CHECK_EQUAL(false, sizer.overflow("12"));
+    BOOST_CHECK_EQUAL(false, sizer.overflow("1234"));
+    BOOST_CHECK_EQUAL(false, sizer.overflow("12345"));
+    BOOST_CHECK_EQUAL(true, sizer.overflow("123456"));
 }
 
 #endif

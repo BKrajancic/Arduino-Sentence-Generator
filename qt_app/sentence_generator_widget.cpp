@@ -28,7 +28,7 @@ Sentence_Generator_Widget::~Sentence_Generator_Widget()
 
 }
 
-void Sentence_Generator_Widget::resize(const unsigned int chars_per_row, const unsigned int rows_per_screen)
+void Sentence_Generator_Widget::set_screen_size(const unsigned int chars_per_row, const unsigned int rows_per_screen)
 {
     sentence_generator.resize(chars_per_row, rows_per_screen);
 }

@@ -4,12 +4,14 @@
 #include <QPushButton>
 #include <QString>
 #include "personal_info.hpp"
+#include "math.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , text(new Sentence_Generator_Widget(32,2))
     , ui(new Ui::MainWindow)
     , source(PERSONAL::REMOTE_URL)
 {
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->setupUi(this);
 
     QT_GRAMMAR::Qt_Grammar g = QT_GRAMMAR::Qt_Grammar();
@@ -18,10 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     text->setMargin(8);
 
     manager = new QNetworkAccessManager();
-
-
-    const auto rows = 3;
-    const auto cols = 3;
+    const auto rows = static_cast<int>(sqrt(PERSONAL::URLS.length()));
+    const auto cols = (rows) + (rows * rows != PERSONAL::URLS.length());
 
     QWidget *widget = new QWidget();
     setCentralWidget(widget);
@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     QGridLayout* btnLayout = new QGridLayout(widget);
     QFont button_font("Arial", 24, QFont::Bold);
 
-    auto button_widths = 0;
+    auto button_widths = 0;    
     for (auto i = 0; i < rows * cols; ++i)
     {
         QPushButton* const button = new QPushButton(PERSONAL::URLS[i], this);
@@ -46,11 +46,18 @@ MainWindow::MainWindow(QWidget *parent)
                 this->pressed(PERSONAL::URLS[i]);
             }
         );
-        button_widths += button->width();
+        if (i < cols)
+        {
+            button_widths += button->width();
+        }
     }
 
-    const auto full_width =  (button_widths);
-    for (auto i = 0u; i < unsigned(full_width) * 2u; ++i)
+    QFont text_font("Arial", 24, QFont::Bold);
+    btnLayout->addWidget(text, 0, 0, 1 ,cols);
+    text->setFont(text_font);
+    text->setMaximumWidth(button_widths);
+
+    for (auto i = 0u; i < unsigned(button_widths) * 2u; ++i)
     {
         QString demo = "";
         for (auto j = 0u; j < i; ++j)
@@ -58,12 +65,13 @@ MainWindow::MainWindow(QWidget *parent)
             demo.push_back('_');
         }
 
+        text->setText(demo);
+        const auto metrics = text->fontMetrics();
+        const auto most_chars = button_widths / metrics.maxWidth();
         const auto text_width = text->fontMetrics().boundingRect(demo).width();
-        if (text_width >= full_width)
+        if (text_width >= button_widths)
         {
-            text->setMaximumWidth(full_width);
-            text->resize(i, 2);
-            btnLayout->addWidget(text, 0, 0, 1 ,cols);
+            text->set_screen_size(i - 4, 2);
             break;
         }
     }

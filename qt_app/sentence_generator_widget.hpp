@@ -27,7 +27,7 @@ public:
     Sentence_Generator_Widget(unsigned int cols, unsigned int rows, QWidget *parent = nullptr);
     ~Sentence_Generator_Widget();
     void next_screen();
-    void resize(const unsigned int rows, const unsigned int cols);
+    void set_screen_size(const unsigned int cols, const unsigned int rows);
     void shuffle();
     void set_grammar(QT_GRAMMAR::Qt_Grammar grammar);
 private:
