@@ -5,3 +5,4 @@ add_executable(${PROJECT_NAME} demo.cpp)
 
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC lib)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+target_compile_options(demo PRIVATE -Wall)
