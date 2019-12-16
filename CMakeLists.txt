@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(root)
-include_directories("lib")
+add_subdirectory(lib)
 add_subdirectory(test)
 add_subdirectory(demo)

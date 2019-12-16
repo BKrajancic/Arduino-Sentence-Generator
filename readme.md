@@ -5,8 +5,7 @@ This repo features three example projects:
 
 1. Arduino
 2. QT
-3. Windows
-
+3. demo
 
 # Projects
 ## arduino
