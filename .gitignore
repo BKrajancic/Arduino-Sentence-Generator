@@ -33,3 +33,4 @@
 personal_info.hpp
 personal_grammar.hpp
 *build*
+webassembly/*

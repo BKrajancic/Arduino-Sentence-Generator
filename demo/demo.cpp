@@ -24,6 +24,7 @@ int main()
         std::vector<std::string>::iterator
         >
         (std::make_unique<Monospace_Sizer<std::string>>());
+
     sentence_generator.print_grammar(std::cout);
     sentence_generator.shuffle();
     sentence_generator.print_grammar(std::cout);
