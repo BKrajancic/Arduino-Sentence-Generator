@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<manifest package="org.qtproject.dorkbutton" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
-    <application android:icon="@drawable/icon" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Dork Button">
-        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="org.qtproject.example.notification.NotificationClient" android:label="Dork Button" android:screenOrientation="unspecified">
+<manifest package="org.qtproject.button" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
+    <application android:icon="@drawable/icon" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="button">
+        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="org.qtproject.example.notification.NotificationClient" android:label="button" android:screenOrientation="unspecified">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

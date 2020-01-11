@@ -33,7 +33,6 @@
 personal_info.hpp
 personal_grammar.hpp
 *build*
-qt_app/android/**
 # Webassembly
 *.wasm
 *.js
