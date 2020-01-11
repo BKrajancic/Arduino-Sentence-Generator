@@ -193,7 +193,7 @@ class Sentence_Generator
       {
         Word out = stack.back();
         stack.pop_back();
-        if (sizer->overflow(out, size))
+        if (sizer->word_fits(out, size) != true)
         {
           stack.push_back(substring(out, size, out.length()));
           out = substring(out, 0, size);
@@ -243,15 +243,23 @@ class Sentence_Generator
           {
               out.push_back(pop_size(width_per_row));
           }
-          else if (sizer->overflow(stack.back(), width_per_row))
+          else if (sizer->word_fits(stack.back(), width_per_row) != true)
           {
-              const auto pop = pop_size(width_per_row - length(overflow));
-              out.push_back(pop + overflow);
+              auto next = stack.back();
+              Word removed = "";
+              while(sizer->word_fits(next + overflow, width_per_row) != true)
+              {
+                  removed = substring(next, next.size() - 1, 1) + removed;
+                  next = substring(next, 0, next.size() - 1);
+              }
+              stack.pop_back();
+              stack.push_back(removed);
+
+              out.push_back(next + overflow);
           }
           else
           {
-              const auto short_size = width_per_row - length(elipsis);
-              const auto pop = pop_size(short_size);
+              const auto pop = pop_size(width_per_row - sizer->size_word(elipsis));
               out.push_back(pop + elipsis);
           }
         }

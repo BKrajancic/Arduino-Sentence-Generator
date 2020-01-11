@@ -7,13 +7,8 @@ class Monospace_Sizer : public Sizer<Word>
 
     Monospace_Sizer() : Sizer<Word>() {};
 
-    bool overflow(const Word word, unsigned int size) const override
+    unsigned long size_word(const Word word) const
     {
-        return false == word_fits(word, size);
+        return length(word);
     };
-
-    bool word_fits(const Word word, unsigned int max_size) const override
-    {
-        return length(word) <= max_size;
-    }
 };

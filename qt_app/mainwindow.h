@@ -29,7 +29,7 @@ private:
     QGridLayout* btnLayout;
 
     const QString source;
-    int rows;
-    int cols;
+    const int rows;
+    const int cols;
 };
 #endif // MAINWINDOW_H

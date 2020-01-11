@@ -13,14 +13,9 @@ class QLabel_Sizer : public Sizer<Word>
     : Sizer<Word>()
     , fontMetrics(QFontMetrics(font)) {}
 
-    bool overflow(const Word word, unsigned int size) const override
+    unsigned long size_word(const Word word) const
     {
-        return false == word_fits(word, size);
-    }
-
-    bool word_fits(const Word word, unsigned int max_size) const override
-    {
-        return fontMetrics.width(word) <= static_cast<int>(max_size);
+        return fontMetrics.width(word);
     }
 
     private:

@@ -466,10 +466,54 @@ BOOST_AUTO_TEST_CASE(demo_pop_size)
 BOOST_AUTO_TEST_CASE(test_sizer)
 {
     const auto sizer = Monospace_Sizer_Test();
-    BOOST_CHECK_EQUAL(false, sizer.overflow("12", 5));
-    BOOST_CHECK_EQUAL(false, sizer.overflow("1234", 5));
-    BOOST_CHECK_EQUAL(false, sizer.overflow("12345", 5));
-    BOOST_CHECK_EQUAL(true, sizer.overflow("123456", 5));
+    BOOST_CHECK_EQUAL(true, sizer.word_fits("12", 5));
+    BOOST_CHECK_EQUAL(true, sizer.word_fits("1234", 5));
+    BOOST_CHECK_EQUAL(true, sizer.word_fits("12345", 5));
+    BOOST_CHECK_EQUAL(false, sizer.word_fits("123456", 5));
+}
+
+template <typename Word>
+class Test_Sizer : public Sizer<Word>
+{
+    public:
+
+    Test_Sizer() : Sizer<Word>() {};
+
+
+    unsigned long size_word(const Word word) const
+    {
+        auto size = 0u;
+        for (auto i = 0u; i < length(word); ++i)
+        {
+            if (word[i] == '.')
+            {
+                size += 1;
+            }
+            else
+            {
+                size += 2;
+            }
+        }
+        return size;
+    };
+};
+
+BOOST_AUTO_TEST_CASE(test_sizer)
+{
+
+
+    auto generator = Sentence_Generator_Test(std::make_unique<Test_Sizer<Word>>());
+
+    auto g = Grammar_Test();
+    g[Word("<START>")] = {{"1234", "456"}};
+    generator.set_grammar(g);
+    generator.get_screen(6, 1); // empty
+    const auto out1 = generator.get_screen(6, 1);
+
+    const auto expected1 = {Word("123...")};
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(out1.begin(),out1.end(),
+                                expected1.begin(), expected1.end());
 }
 
 #endif

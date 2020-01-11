@@ -11,12 +11,10 @@ class Sizer
     Sizer() {};
     virtual ~Sizer() {};
 
-    virtual bool overflow(const Word word,  unsigned int size) const = 0;
-    virtual bool word_fits(const Word word, unsigned int size) const = 0;
+    virtual unsigned long size_word(const Word word) const = 0;
 
-    void set_elipsis(const Word elipsis)
+    bool word_fits(const Word word, unsigned long max_size) const
     {
-        this->elipsis = elipsis;
+        return size_word(word) <= max_size;
     }
-
 };

@@ -69,9 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
     effect->setBlurRadius(12);
-    effect->setOffset(3,3);
-    //text->setGraphicsEffect(effect);
-
+    effect->setOffset(3, 3);
 
     text->shuffle();
     text->next_screen(INT_MAX);
@@ -84,7 +82,8 @@ void MainWindow::pressed(const QString button_text)
     const QUrl url = source + button_text;
     request.setUrl(url);
     manager->get(request);
-    text->next_screen(get_width());
+    const auto width = get_width();
+    text->next_screen(width - 32);
 }
 
 MainWindow::~MainWindow()
@@ -94,8 +93,8 @@ MainWindow::~MainWindow()
 
 unsigned int MainWindow::get_width() const
 {
-    const auto last_cell = btnLayout->cellRect(1,cols - 1);
-    const auto end_x = last_cell.x() + last_cell.width();
-    const auto right_margin = btnLayout->horizontalSpacing();
-    return static_cast<unsigned int>( end_x - (2 * text->margin()) - (right_margin * 2));
+    const auto text_padding = text->margin() * 2;
+    const auto textbox_width = text->rect().width();
+    const auto max_width = textbox_width - text_padding;
+    return static_cast<unsigned int>(max_width);
 }
