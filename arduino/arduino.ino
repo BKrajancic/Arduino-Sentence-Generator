@@ -8,6 +8,8 @@ size_t length(const String item)
   return item.length();
 }
 
+#define NO_SHUFFLE
+
 #include <LiquidCrystal_I2C.h>
 #include <ESP8266HTTPClient.h>
 #include <esp8266wifi.h>
