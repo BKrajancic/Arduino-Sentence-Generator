@@ -25,7 +25,9 @@ class Sentence_Generator
         macros.push_back(new No_Space_Begin<Word, Sentence, Sentence_Iterator>());
         macros.push_back(new No_Space_End<Word, Sentence, Sentence_Iterator>());
         g = Grammar();
+#ifdef NO_SHUFFLE
         shuffle();
+#endif
     }
 
     void set_grammar(const Grammar new_grammar)
